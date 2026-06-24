@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcgTournamentManager.Api", "TcgTournamentManager.Api\TcgTournamentManager.Api.csproj", "{602B82A7-7160-464B-B37E-0CA819A6641B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcgTournamentManager.Core", "TcgTournamentManager.Core\TcgTournamentManager.Core.csproj", "{C27B4944-C6F8-4032-AAE3-E5EBAF1C513C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcgTournamentManager.Infrastructure", "TcgTournamentManager.Infrastructure\TcgTournamentManager.Infrastructure.csproj", "{EC825058-58DE-4C7F-86F1-1FFA6B63710B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcgTournamentManager.Tests", "TcgTournamentManager.Tests\TcgTournamentManager.Tests.csproj", "{B2E011C0-C1E4-4AC7-8F9A-DD88B7A84D14}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{602B82A7-7160-464B-B37E-0CA819A6641B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602B82A7-7160-464B-B37E-0CA819A6641B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602B82A7-7160-464B-B37E-0CA819A6641B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602B82A7-7160-464B-B37E-0CA819A6641B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C27B4944-C6F8-4032-AAE3-E5EBAF1C513C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C27B4944-C6F8-4032-AAE3-E5EBAF1C513C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C27B4944-C6F8-4032-AAE3-E5EBAF1C513C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C27B4944-C6F8-4032-AAE3-E5EBAF1C513C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC825058-58DE-4C7F-86F1-1FFA6B63710B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC825058-58DE-4C7F-86F1-1FFA6B63710B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC825058-58DE-4C7F-86F1-1FFA6B63710B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC825058-58DE-4C7F-86F1-1FFA6B63710B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E011C0-C1E4-4AC7-8F9A-DD88B7A84D14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E011C0-C1E4-4AC7-8F9A-DD88B7A84D14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E011C0-C1E4-4AC7-8F9A-DD88B7A84D14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E011C0-C1E4-4AC7-8F9A-DD88B7A84D14}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

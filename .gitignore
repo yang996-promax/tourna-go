@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Local config (machine-specific)
+TcgTournamentManager.Api/appsettings.Development.json
+
+# IDE / OS
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local dev artifacts
+terminals/
+agent-tools/
+
+# Test / tooling output
+TestResults/
+coverage/
+*.trx
