@@ -1,0 +1,3 @@
+# Copy to _local-config.ps1 (gitignored) and set your SQL Server instance.
+$script:SqlServer = ".\YOUR_SQL_INSTANCE"
+$script:SqlDatabase = "TcgTournamentManager"

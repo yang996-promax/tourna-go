@@ -1,6 +1,9 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=.\\MSSQLSERVER_SIDE;Database=TcgTournamentManager;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+    "DefaultConnection": "Server=.\\YOUR_SQL_INSTANCE;Database=TcgTournamentManager;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  },
+  "Jwt": {
+    "Key": "change-this-to-a-long-random-secret-at-least-32-characters"
   },
   "Logging": {
     "LogLevel": {

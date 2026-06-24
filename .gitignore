@@ -19,6 +19,7 @@ npm-debug.log*
 
 # Local config (machine-specific)
 TcgTournamentManager.Api/appsettings.Development.json
+scripts/_local-config.ps1
 
 # IDE / OS
 .idea/

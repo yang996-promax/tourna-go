@@ -1,5 +1,8 @@
 # E2E test: wipe DB, create event, Swiss -> Top Cut -> Champion
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "Get-LocalSqlConfig.ps1")
+$sqlServer = Get-TournaGoSqlServer
+$sqlDatabase = Get-TournaGoSqlDatabase
 $baseUrl = "http://localhost:5284"
 
 function Invoke-Api {
@@ -40,7 +43,7 @@ DBCC CHECKIDENT ('BYE_HISTORY', RESEED, 0);
 DBCC CHECKIDENT ('TOP_CUT_BRACKET', RESEED, 0);
 DBCC CHECKIDENT ('AUDIT_LOG', RESEED, 0);
 "@
-sqlcmd -S ".\MSSQLSERVER_SIDE" -d TcgTournamentManager -C -Q $wipeSql | Out-Null
+sqlcmd -S $sqlServer -d $sqlDatabase -C -Q $wipeSql | Out-Null
 Write-Host "Database wiped (MST_ORGANIZER_USER preserved)."
 
 Write-Host "`n=== Step 2: Login ===" -ForegroundColor Cyan

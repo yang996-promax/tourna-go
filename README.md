@@ -18,7 +18,34 @@ A self-hosted, offline-capable tournament management application for local TCG o
 
 ### 1. Backend
 
-Copy `TcgTournamentManager.Api/appsettings.Development.json.example` to `appsettings.Development.json` and adjust the SQL Server instance if needed.
+### Local secrets (required)
+
+Do **not** put your real SQL Server instance or JWT key in committed config files.
+
+**Option A — `appsettings.Development.json` (recommended)**
+
+```powershell
+copy TcgTournamentManager.Api\appsettings.Development.json.example TcgTournamentManager.Api\appsettings.Development.json
+```
+
+Edit `appsettings.Development.json` with your SQL Server instance and a long random `Jwt:Key`.
+
+**Option B — .NET user secrets**
+
+```powershell
+cd TcgTournamentManager.Api
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.\YOUR_INSTANCE;Database=TcgTournamentManager;Trusted_Connection=True;TrustServerCertificate=True"
+dotnet user-secrets set "Jwt:Key" "your-long-random-secret"
+```
+
+**Option C — environment variables**
+
+```powershell
+$env:ConnectionStrings__DefaultConnection="Server=.\YOUR_INSTANCE;Database=TcgTournamentManager;Trusted_Connection=True;TrustServerCertificate=True"
+$env:JWT__KEY="your-long-random-secret"
+```
+
+For E2E scripts, copy `scripts/_local-config.ps1.example` to `scripts/_local-config.ps1`.
 
 ```powershell
 cd tourna-go
@@ -43,17 +70,14 @@ UI runs at `http://localhost:5173`
 
 ## Connection String
 
-Edit `TcgTournamentManager.Api/appsettings.json`:
+`appsettings.json` ships with a generic LocalDB default only. Override locally using one of the options in **Local secrets** above.
 
-```json
-"DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TcgTournamentManager;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-```
+Examples:
 
-For SQL Server Express:
-
-```json
-"DefaultConnection": "Server=.\\SQLEXPRESS;Database=TcgTournamentManager;Trusted_Connection=True;TrustServerCertificate=True"
-```
+| Instance | Connection string |
+|----------|-------------------|
+| LocalDB | `Server=(localdb)\mssqllocaldb;Database=TcgTournamentManager;Trusted_Connection=True;TrustServerCertificate=True` |
+| SQL Express | `Server=.\SQLEXPRESS;Database=TcgTournamentManager;Trusted_Connection=True;TrustServerCertificate=True` |
 
 ## API Endpoints
 
