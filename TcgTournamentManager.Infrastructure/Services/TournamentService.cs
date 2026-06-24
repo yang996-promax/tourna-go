@@ -11,17 +11,20 @@ public class TournamentService : ITournamentService
     private readonly IPlayerRepository _playerRepo;
     private readonly IMatchRepository _matchRepo;
     private readonly IAuditLogRepository _auditRepo;
+    private readonly ICurrentOrgContext _orgContext;
 
     public TournamentService(
         ITournamentRepository tournamentRepo,
         IPlayerRepository playerRepo,
         IMatchRepository matchRepo,
-        IAuditLogRepository auditRepo)
+        IAuditLogRepository auditRepo,
+        ICurrentOrgContext orgContext)
     {
         _tournamentRepo = tournamentRepo;
         _playerRepo = playerRepo;
         _matchRepo = matchRepo;
         _auditRepo = auditRepo;
+        _orgContext = orgContext;
     }
 
     public async Task<TournamentDto> CreateAsync(CreateTournamentRequest request, CancellationToken ct = default)
@@ -30,6 +33,7 @@ public class TournamentService : ITournamentService
 
         var tournament = new Tournament
         {
+            OrgCD = _orgContext.OrgCD,
             Name = request.Name,
             GameTitle = request.GameTitle,
             EventDate = request.EventDate,

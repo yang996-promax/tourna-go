@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.Entities;
 using TcgTournamentManager.Core.Enums;
 
@@ -59,6 +60,7 @@ public class TournamentDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSyncTrackable(modelBuilder.Entity<Tournament>());
+        ConfigureOrgScoped(modelBuilder.Entity<Tournament>());
         modelBuilder.Entity<Tournament>(e =>
         {
             e.ToTable(DbTableNames.Tournament);
@@ -74,6 +76,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<Player>());
+        ConfigureOrgScoped(modelBuilder.Entity<Player>());
         modelBuilder.Entity<Player>(e =>
         {
             e.ToTable(DbTableNames.Player);
@@ -81,11 +84,12 @@ public class TournamentDbContext : DbContext
             e.Property(x => x.ExternalPlayerId).HasMaxLength(50).IsRequired();
             e.Property(x => x.Name).HasMaxLength(200).IsRequired();
             e.Property(x => x.ContactNumber).HasMaxLength(50);
-            e.HasIndex(x => x.ExternalPlayerId).IsUnique();
+            e.HasIndex(x => new { x.OrgCD, x.ExternalPlayerId }).IsUnique();
             e.HasIndex(x => x.Name);
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<TournamentPlayer>());
+        ConfigureOrgScoped(modelBuilder.Entity<TournamentPlayer>());
         modelBuilder.Entity<TournamentPlayer>(e =>
         {
             e.ToTable(DbTableNames.TournamentPlayer);
@@ -103,6 +107,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<Round>());
+        ConfigureOrgScoped(modelBuilder.Entity<Round>());
         modelBuilder.Entity<Round>(e =>
         {
             e.ToTable(DbTableNames.Round);
@@ -112,6 +117,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<Match>());
+        ConfigureOrgScoped(modelBuilder.Entity<Match>());
         modelBuilder.Entity<Match>(e =>
         {
             e.ToTable(DbTableNames.Match);
@@ -125,6 +131,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<MatchResult>());
+        ConfigureOrgScoped(modelBuilder.Entity<MatchResult>());
         modelBuilder.Entity<MatchResult>(e =>
         {
             e.ToTable(DbTableNames.MatchResult);
@@ -134,6 +141,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<Standing>());
+        ConfigureOrgScoped(modelBuilder.Entity<Standing>());
         modelBuilder.Entity<Standing>(e =>
         {
             e.ToTable(DbTableNames.Standing);
@@ -148,6 +156,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<ByeHistory>());
+        ConfigureOrgScoped(modelBuilder.Entity<ByeHistory>());
         modelBuilder.Entity<ByeHistory>(e =>
         {
             e.ToTable(DbTableNames.ByeHistory);
@@ -158,6 +167,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<TopCutBracket>());
+        ConfigureOrgScoped(modelBuilder.Entity<TopCutBracket>());
         modelBuilder.Entity<TopCutBracket>(e =>
         {
             e.ToTable(DbTableNames.TopCutBracket);
@@ -171,6 +181,7 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<AuditLog>());
+        ConfigureOrgScoped(modelBuilder.Entity<AuditLog>());
         modelBuilder.Entity<AuditLog>(e =>
         {
             e.ToTable(DbTableNames.AuditLog);
@@ -181,13 +192,14 @@ public class TournamentDbContext : DbContext
         });
 
         ConfigureSyncTrackable(modelBuilder.Entity<OrganizerUser>());
+        ConfigureOrgScoped(modelBuilder.Entity<OrganizerUser>());
         modelBuilder.Entity<OrganizerUser>(e =>
         {
             e.ToTable(DbTableNames.OrganizerUser);
             e.HasKey(x => x.Id);
             e.Property(x => x.Username).HasMaxLength(100).IsRequired();
             e.Property(x => x.DisplayName).HasMaxLength(200).IsRequired();
-            e.HasIndex(x => x.Username).IsUnique();
+            e.HasIndex(x => new { x.OrgCD, x.Username }).IsUnique();
         });
     }
 
@@ -201,5 +213,13 @@ public class TournamentDbContext : DbContext
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.SyncVersion).IsRequired();
         builder.Property(x => x.Version).IsRequired();
+    }
+
+    private static void ConfigureOrgScoped<T>(EntityTypeBuilder<T> builder) where T : class, IOrgScoped
+    {
+        builder.Property(x => x.OrgCD)
+            .HasMaxLength(OrgDefaults.OrgCDMaxLength)
+            .IsRequired();
+        builder.HasIndex(x => x.OrgCD);
     }
 }

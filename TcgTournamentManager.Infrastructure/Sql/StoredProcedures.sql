@@ -1,4 +1,4 @@
--- TCG Tournament Manager — data modification stored procedures
+-- TCG Tournament Manager - data modification stored procedures
 -- Sync metadata: INSERT sets CreatedAt/SyncVersion/Version=1/SyncOperation='A'
 -- UPDATE sets SyncVersion, Version=Version+1, SyncOperation='U'
 -- SOFT DELETE sets SyncVersion, Version=Version+1, SyncOperation='D'
@@ -20,6 +20,7 @@ CREATE PROCEDURE dbo.usp_Tournament_Insert
     @EliminationLossCount INT = NULL,
     @Status INT,
     @CurrentRound INT,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -27,13 +28,13 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO MST_TOURNAMENT (
-        Name, GameTitle, EventDate, Organizer, Venue,
+        OrgCD, Name, GameTitle, EventDate, Organizer, Venue,
         TotalSwissRounds, TopCutSize, FirstRoundPairingMode,
         MatchFormat, HasElimination, EliminationLossCount,
         Status, CurrentRound,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @Name, @GameTitle, @EventDate, @Organizer, @Venue,
+        @OrgCD, @Name, @GameTitle, @EventDate, @Organizer, @Venue,
         @TotalSwissRounds, @TopCutSize, @FirstRoundPairingMode,
         @MatchFormat, @HasElimination, @EliminationLossCount,
         @Status, @CurrentRound,
@@ -106,14 +107,15 @@ CREATE PROCEDURE dbo.usp_Player_Insert
     @ExternalPlayerId NVARCHAR(50),
     @Name NVARCHAR(200),
     @ContactNumber NVARCHAR(50) = NULL,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
-    INSERT INTO MST_PLAYER (ExternalPlayerId, Name, ContactNumber, CreatedAt, SyncVersion, Version, SyncOperation)
-    VALUES (@ExternalPlayerId, @Name, @ContactNumber, @Now, @Now, 1, 'A');
+    INSERT INTO MST_PLAYER (OrgCD, ExternalPlayerId, Name, ContactNumber, CreatedAt, SyncVersion, Version, SyncOperation)
+    VALUES (@OrgCD, @ExternalPlayerId, @Name, @ContactNumber, @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
 END
@@ -150,6 +152,7 @@ CREATE PROCEDURE dbo.usp_TournamentPlayer_Insert
     @DeckName NVARCHAR(200) = NULL,
     @IsDropped BIT,
     @RegisteredAt DATETIME2,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -157,10 +160,10 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO TOURNAMENT_PLAYER (
-        TournamentId, PlayerId, PlayerNumber, DeckName, IsDropped, RegisteredAt,
+        OrgCD, TournamentId, PlayerId, PlayerNumber, DeckName, IsDropped, RegisteredAt,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @TournamentId, @PlayerId, @PlayerNumber, @DeckName, @IsDropped, @RegisteredAt,
+        @OrgCD, @TournamentId, @PlayerId, @PlayerNumber, @DeckName, @IsDropped, @RegisteredAt,
         @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
@@ -214,14 +217,15 @@ CREATE PROCEDURE dbo.usp_Round_Insert
     @RoundType INT,
     @IsComplete BIT,
     @CompletedAt DATETIME2 = NULL,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
-    INSERT INTO MST_ROUND (TournamentId, RoundNumber, RoundType, IsComplete, CompletedAt, CreatedAt, SyncVersion, Version, SyncOperation)
-    VALUES (@TournamentId, @RoundNumber, @RoundType, @IsComplete, @CompletedAt, @Now, @Now, 1, 'A');
+    INSERT INTO MST_ROUND (OrgCD, TournamentId, RoundNumber, RoundType, IsComplete, CompletedAt, CreatedAt, SyncVersion, Version, SyncOperation)
+    VALUES (@OrgCD, @TournamentId, @RoundNumber, @RoundType, @IsComplete, @CompletedAt, @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
 END
@@ -258,6 +262,7 @@ CREATE PROCEDURE dbo.usp_Match_Insert
     @IsComplete BIT,
     @WinnerId INT = NULL,
     @TopCutBracketId INT = NULL,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -265,10 +270,10 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO MST_MATCH (
-        RoundId, TableNumber, PlayerAId, PlayerBId, IsBye, IsComplete, WinnerId, TopCutBracketId,
+        OrgCD, RoundId, TableNumber, PlayerAId, PlayerBId, IsBye, IsComplete, WinnerId, TopCutBracketId,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @RoundId, @TableNumber, @PlayerAId, @PlayerBId, @IsBye, @IsComplete, @WinnerId, @TopCutBracketId,
+        @OrgCD, @RoundId, @TableNumber, @PlayerAId, @PlayerBId, @IsBye, @IsComplete, @WinnerId, @TopCutBracketId,
         @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
@@ -315,6 +320,7 @@ CREATE PROCEDURE dbo.usp_MatchResult_Insert
     @PlayerAMatchPoints INT,
     @PlayerBMatchPoints INT,
     @RecordedAt DATETIME2,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -322,10 +328,10 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO MATCH_RESULT (
-        MatchId, ResultType, PlayerAGameWins, PlayerBGameWins, PlayerAMatchPoints, PlayerBMatchPoints, RecordedAt,
+        OrgCD, MatchId, ResultType, PlayerAGameWins, PlayerBGameWins, PlayerAMatchPoints, PlayerBMatchPoints, RecordedAt,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @MatchId, @ResultType, @PlayerAGameWins, @PlayerBGameWins, @PlayerAMatchPoints, @PlayerBMatchPoints, @RecordedAt,
+        @OrgCD, @MatchId, @ResultType, @PlayerAGameWins, @PlayerBGameWins, @PlayerAMatchPoints, @PlayerBMatchPoints, @RecordedAt,
         @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
@@ -387,6 +393,7 @@ CREATE PROCEDURE dbo.usp_Standing_Insert
     @MatchesWon INT,
     @MatchesLost INT,
     @MatchesDrawn INT,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -394,11 +401,11 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO TOURNAMENT_STANDING (
-        TournamentId, TournamentPlayerId, Rank, MatchPoints, GameWins, GameLosses,
+        OrgCD, TournamentId, TournamentPlayerId, Rank, MatchPoints, GameWins, GameLosses,
         OMWPercent, GWPercent, OGWPercent, MatchesPlayed, MatchesWon, MatchesLost, MatchesDrawn,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @TournamentId, @TournamentPlayerId, @Rank, @MatchPoints, @GameWins, @GameLosses,
+        @OrgCD, @TournamentId, @TournamentPlayerId, @Rank, @MatchPoints, @GameWins, @GameLosses,
         @OMWPercent, @GWPercent, @OGWPercent, @MatchesPlayed, @MatchesWon, @MatchesLost, @MatchesDrawn,
         @Now, @Now, 1, 'A');
 
@@ -414,14 +421,15 @@ CREATE PROCEDURE dbo.usp_ByeHistory_Insert
     @TournamentPlayerId INT,
     @RoundNumber INT,
     @AssignedAt DATETIME2,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
-    INSERT INTO BYE_HISTORY (TournamentId, TournamentPlayerId, RoundNumber, AssignedAt, CreatedAt, SyncVersion, Version, SyncOperation)
-    VALUES (@TournamentId, @TournamentPlayerId, @RoundNumber, @AssignedAt, @Now, @Now, 1, 'A');
+    INSERT INTO BYE_HISTORY (OrgCD, TournamentId, TournamentPlayerId, RoundNumber, AssignedAt, CreatedAt, SyncVersion, Version, SyncOperation)
+    VALUES (@OrgCD, @TournamentId, @TournamentPlayerId, @RoundNumber, @AssignedAt, @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
 END
@@ -439,6 +447,7 @@ CREATE PROCEDURE dbo.usp_TopCutBracket_Insert
     @WinnerId INT = NULL,
     @NextBracketId INT = NULL,
     @IsComplete BIT,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -446,10 +455,10 @@ BEGIN
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
     INSERT INTO TOP_CUT_BRACKET (
-        TournamentId, Round, MatchPosition, PlayerAId, PlayerBId, WinnerId, NextBracketId, IsComplete,
+        OrgCD, TournamentId, Round, MatchPosition, PlayerAId, PlayerBId, WinnerId, NextBracketId, IsComplete,
         CreatedAt, SyncVersion, Version, SyncOperation)
     VALUES (
-        @TournamentId, @Round, @MatchPosition, @PlayerAId, @PlayerBId, @WinnerId, @NextBracketId, @IsComplete,
+        @OrgCD, @TournamentId, @Round, @MatchPosition, @PlayerAId, @PlayerBId, @WinnerId, @NextBracketId, @IsComplete,
         @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
@@ -501,14 +510,15 @@ CREATE PROCEDURE dbo.usp_AuditLog_Insert
     @EntityId INT = NULL,
     @Details NVARCHAR(MAX) = NULL,
     @PerformedBy NVARCHAR(MAX) = NULL,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
-    INSERT INTO AUDIT_LOG (Action, EntityType, EntityId, Details, PerformedBy, CreatedAt, SyncVersion, Version, SyncOperation)
-    VALUES (@Action, @EntityType, @EntityId, @Details, @PerformedBy, @Now, @Now, 1, 'A');
+    INSERT INTO AUDIT_LOG (OrgCD, Action, EntityType, EntityId, Details, PerformedBy, CreatedAt, SyncVersion, Version, SyncOperation)
+    VALUES (@OrgCD, @Action, @EntityType, @EntityId, @Details, @PerformedBy, @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
 END
@@ -522,14 +532,15 @@ CREATE PROCEDURE dbo.usp_OrganizerUser_Insert
     @PasswordHash NVARCHAR(MAX),
     @DisplayName NVARCHAR(200),
     @IsActive BIT,
+    @OrgCD NVARCHAR(50),
     @Id INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
 
-    INSERT INTO MST_ORGANIZER_USER (Username, PasswordHash, DisplayName, IsActive, CreatedAt, SyncVersion, Version, SyncOperation)
-    VALUES (@Username, @PasswordHash, @DisplayName, @IsActive, @Now, @Now, 1, 'A');
+    INSERT INTO MST_ORGANIZER_USER (OrgCD, Username, PasswordHash, DisplayName, IsActive, CreatedAt, SyncVersion, Version, SyncOperation)
+    VALUES (@OrgCD, @Username, @PasswordHash, @DisplayName, @IsActive, @Now, @Now, 1, 'A');
 
     SET @Id = SCOPE_IDENTITY();
 END

@@ -61,6 +61,8 @@ public class TopCutService : ITopCutService
 
         var seeded = standings.Take(cutSize).ToList();
         var brackets = BuildBracketTree(tournamentId, cutSize, seeded.Select(s => s.TournamentPlayerId).ToList());
+        foreach (var bracket in brackets)
+            bracket.OrgCD = tournament.OrgCD;
         await _topCutRepo.CreateBracketsAsync(brackets, ct);
 
         tournament.Status = TournamentStatus.TopCutInProgress;
@@ -163,6 +165,7 @@ public class TopCutService : ITopCutService
         {
             round = new Round
             {
+                OrgCD = tournament.OrgCD,
                 TournamentId = bracket.TournamentId,
                 RoundNumber = roundNumber,
                 RoundType = RoundType.TopCut,
@@ -174,6 +177,7 @@ public class TopCutService : ITopCutService
         var isPlayerAWin = winnerId == bracket.PlayerAId;
         var match = new Match
         {
+            OrgCD = tournament.OrgCD,
             RoundId = round.Id,
             TableNumber = bracket.MatchPosition,
             PlayerAId = bracket.PlayerAId,
@@ -186,6 +190,7 @@ public class TopCutService : ITopCutService
 
         match.Result = new MatchResult
         {
+            OrgCD = tournament.OrgCD,
             MatchId = match.Id,
             ResultType = MatchResultType.Win2_0,
             PlayerAGameWins = isPlayerAWin ? 2 : 0,

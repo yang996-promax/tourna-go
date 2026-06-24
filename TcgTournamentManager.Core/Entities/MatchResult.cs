@@ -1,10 +1,12 @@
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.Enums;
 
 namespace TcgTournamentManager.Core.Entities;
 
-public class MatchResult : ISyncTrackable
+public class MatchResult : ISyncTrackable, IOrgScoped
 {
     public int Id { get; set; }
+    public string OrgCD { get; set; } = OrgDefaults.DefaultOrgCD;
     public int MatchId { get; set; }
     public MatchResultType ResultType { get; set; }
     public int PlayerAGameWins { get; set; }

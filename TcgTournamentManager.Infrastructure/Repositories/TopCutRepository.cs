@@ -9,8 +9,7 @@ public class TopCutRepository : ITopCutRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
-
-    public TopCutRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public TopCutRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext _)
     {
         _db = db;
         _sp = sp;
@@ -52,6 +51,7 @@ public class TopCutRepository : ITopCutRepository
                 StoredProcedureExecutor.IntNull("@WinnerId", bracket.WinnerId),
                 StoredProcedureExecutor.IntNull("@NextBracketId", bracket.NextBracketId),
                 StoredProcedureExecutor.Bit("@IsComplete", bracket.IsComplete),
+                StoredProcedureExecutor.Str("@OrgCD", bracket.OrgCD, 50),
                 StoredProcedureExecutor.OutInt("@Id"));
 
             bracket.Id = id;

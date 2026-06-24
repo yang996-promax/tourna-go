@@ -9,8 +9,7 @@ public class StandingRepository : IStandingRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
-
-    public StandingRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public StandingRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext _)
     {
         _db = db;
         _sp = sp;
@@ -47,6 +46,7 @@ public class StandingRepository : IStandingRepository
                 StoredProcedureExecutor.Int("@MatchesWon", standing.MatchesWon),
                 StoredProcedureExecutor.Int("@MatchesLost", standing.MatchesLost),
                 StoredProcedureExecutor.Int("@MatchesDrawn", standing.MatchesDrawn),
+                StoredProcedureExecutor.Str("@OrgCD", standing.OrgCD, 50),
                 StoredProcedureExecutor.OutInt("@Id"));
 
             standing.Id = id;

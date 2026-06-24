@@ -10,28 +10,34 @@ public class TournamentRepository : ITournamentRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
+    private readonly ICurrentOrgContext _orgContext;
 
-    public TournamentRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public TournamentRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext orgContext)
     {
         _db = db;
         _sp = sp;
+        _orgContext = orgContext;
     }
 
     public async Task<Tournament?> GetByIdAsync(int id, CancellationToken ct = default) =>
-        await _db.Tournaments.FirstOrDefaultAsync(t => t.Id == id, ct);
+        await _db.Tournaments.FirstOrDefaultAsync(t => t.Id == id && t.OrgCD == _orgContext.OrgCD, ct);
 
     public async Task<Tournament?> GetByIdWithDetailsAsync(int id, CancellationToken ct = default) =>
         await _db.Tournaments
             .Include(t => t.TournamentPlayers).ThenInclude(tp => tp.Player)
             .Include(t => t.Rounds).ThenInclude(r => r.Matches)
-            .FirstOrDefaultAsync(t => t.Id == id, ct);
+            .FirstOrDefaultAsync(t => t.Id == id && t.OrgCD == _orgContext.OrgCD, ct);
 
     public async Task<IReadOnlyList<Tournament>> GetAllAsync(CancellationToken ct = default) =>
-        await _db.Tournaments.OrderByDescending(t => t.EventDate).ToListAsync(ct);
+        await _db.Tournaments
+            .Where(t => t.OrgCD == _orgContext.OrgCD)
+            .OrderByDescending(t => t.EventDate)
+            .ToListAsync(ct);
 
     public async Task<Tournament?> GetActiveTournamentAsync(CancellationToken ct = default) =>
         await _db.Tournaments
-            .Where(t => t.Status == TournamentStatus.InProgress || t.Status == TournamentStatus.Registration)
+            .Where(t => t.OrgCD == _orgContext.OrgCD &&
+                        (t.Status == TournamentStatus.InProgress || t.Status == TournamentStatus.Registration))
             .OrderByDescending(t => t.SyncVersion)
             .FirstOrDefaultAsync(ct);
 
@@ -51,6 +57,7 @@ public class TournamentRepository : ITournamentRepository
             StoredProcedureExecutor.IntNull("@EliminationLossCount", tournament.EliminationLossCount),
             StoredProcedureExecutor.Int("@Status", (int)tournament.Status),
             StoredProcedureExecutor.Int("@CurrentRound", tournament.CurrentRound),
+            StoredProcedureExecutor.Str("@OrgCD", tournament.OrgCD, 50),
             StoredProcedureExecutor.OutInt("@Id"));
 
         tournament.Id = id;

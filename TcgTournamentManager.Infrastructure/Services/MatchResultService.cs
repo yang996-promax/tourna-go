@@ -56,6 +56,7 @@ public class MatchResultService : IMatchResultService
         {
             match.Result = new MatchResult
             {
+                OrgCD = tournament.OrgCD,
                 MatchId = match.Id,
                 ResultType = request.ResultType,
                 PlayerAGameWins = aGw,

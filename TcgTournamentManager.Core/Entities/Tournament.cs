@@ -1,10 +1,12 @@
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.Enums;
 
 namespace TcgTournamentManager.Core.Entities;
 
-public class Tournament : ISyncTrackable
+public class Tournament : ISyncTrackable, IOrgScoped
 {
     public int Id { get; set; }
+    public string OrgCD { get; set; } = OrgDefaults.DefaultOrgCD;
     public string Name { get; set; } = string.Empty;
     public string GameTitle { get; set; } = string.Empty;
     public DateTime EventDate { get; set; }

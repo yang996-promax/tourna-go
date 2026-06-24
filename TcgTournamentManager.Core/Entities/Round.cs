@@ -1,10 +1,12 @@
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.Enums;
 
 namespace TcgTournamentManager.Core.Entities;
 
-public class Round : ISyncTrackable
+public class Round : ISyncTrackable, IOrgScoped
 {
     public int Id { get; set; }
+    public string OrgCD { get; set; } = OrgDefaults.DefaultOrgCD;
     public int TournamentId { get; set; }
     public int RoundNumber { get; set; }
     public RoundType RoundType { get; set; } = RoundType.Swiss;

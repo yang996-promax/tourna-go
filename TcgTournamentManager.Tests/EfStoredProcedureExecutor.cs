@@ -30,6 +30,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_Tournament_Insert":
                 return await InsertAsync(new Tournament
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     Name = (string)p["Name"]!,
                     GameTitle = (string)p["GameTitle"]!,
                     EventDate = (DateTime)p["EventDate"]!,
@@ -56,6 +57,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_Player_Insert":
                 return await InsertAsync(new Player
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     ExternalPlayerId = (string)p["ExternalPlayerId"]!,
                     Name = (string)p["Name"]!,
                     ContactNumber = p["ContactNumber"] as string
@@ -68,6 +70,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_TournamentPlayer_Insert":
                 return await InsertAsync(new TournamentPlayer
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     TournamentId = (int)p["TournamentId"]!,
                     PlayerId = (int)p["PlayerId"]!,
                     PlayerNumber = (int)p["PlayerNumber"]!,
@@ -87,6 +90,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_Round_Insert":
                 return await InsertAsync(new Round
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     TournamentId = (int)p["TournamentId"]!,
                     RoundNumber = (int)p["RoundNumber"]!,
                     RoundType = (RoundType)(int)p["RoundType"]!,
@@ -101,6 +105,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_Match_Insert":
                 return await InsertAsync(new Match
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     RoundId = (int)p["RoundId"]!,
                     TableNumber = (int)p["TableNumber"]!,
                     PlayerAId = p["PlayerAId"] as int?,
@@ -118,6 +123,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_MatchResult_Insert":
                 return await InsertAsync(new MatchResult
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     MatchId = (int)p["MatchId"]!,
                     ResultType = (MatchResultType)(int)p["ResultType"]!,
                     PlayerAGameWins = (int)p["PlayerAGameWins"]!,
@@ -138,6 +144,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_Standing_Insert":
                 return await InsertAsync(new Standing
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     TournamentId = (int)p["TournamentId"]!,
                     TournamentPlayerId = (int)p["TournamentPlayerId"]!,
                     Rank = (int)p["Rank"]!,
@@ -156,6 +163,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_ByeHistory_Insert":
                 return await InsertAsync(new ByeHistory
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     TournamentId = (int)p["TournamentId"]!,
                     TournamentPlayerId = (int)p["TournamentPlayerId"]!,
                     RoundNumber = (int)p["RoundNumber"]!,
@@ -165,6 +173,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_TopCutBracket_Insert":
                 return await InsertAsync(new TopCutBracket
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     TournamentId = (int)p["TournamentId"]!,
                     Round = (TopCutRound)(int)p["Round"]!,
                     MatchPosition = (int)p["MatchPosition"]!,
@@ -186,6 +195,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_AuditLog_Insert":
                 return await InsertAsync(new AuditLog
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     Action = (string)p["Action"]!,
                     EntityType = (string)p["EntityType"]!,
                     EntityId = p["EntityId"] as int?,
@@ -196,6 +206,7 @@ public class EfStoredProcedureExecutor : StoredProcedureExecutor
             case "usp_OrganizerUser_Insert":
                 return await InsertAsync(new OrganizerUser
                 {
+                    OrgCD = (string)p["OrgCD"]!,
                     Username = (string)p["Username"]!,
                     PasswordHash = (string)p["PasswordHash"]!,
                     DisplayName = (string)p["DisplayName"]!,

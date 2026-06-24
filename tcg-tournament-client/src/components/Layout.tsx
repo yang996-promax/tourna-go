@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Layout() {
   const { pathname } = useLocation();
-  const { displayName, logout } = useAuth();
+  const { displayName, orgCD, logout } = useAuth();
   const isHome = pathname === '/';
 
   return (
@@ -26,7 +26,8 @@ export default function Layout() {
           </Link>
         </nav>
         <div className="border-t border-slate-800 pt-4">
-          <p className="text-sm text-slate-400 mb-2">{displayName}</p>
+          <p className="text-sm text-slate-400 mb-1">{displayName}</p>
+          {orgCD && <p className="text-xs text-slate-500 mb-2">Org: {orgCD}</p>}
           <button
             onClick={logout}
             className="flex items-center gap-2 text-sm text-slate-400 hover:text-red-400"

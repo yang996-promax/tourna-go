@@ -132,4 +132,5 @@ export interface LoginResponse {
   username: string;
   displayName: string;
   expiresAt: string;
+  orgCD: string;
 }

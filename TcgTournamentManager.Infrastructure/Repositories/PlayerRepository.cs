@@ -10,11 +10,13 @@ public class PlayerRepository : IPlayerRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
+    private readonly ICurrentOrgContext _orgContext;
 
-    public PlayerRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public PlayerRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext orgContext)
     {
         _db = db;
         _sp = sp;
+        _orgContext = orgContext;
     }
 
     public async Task<Player> CreatePlayerAsync(Player player, CancellationToken ct = default)
@@ -23,6 +25,7 @@ public class PlayerRepository : IPlayerRepository
             StoredProcedureExecutor.Str("@ExternalPlayerId", player.ExternalPlayerId, 50),
             StoredProcedureExecutor.Str("@Name", player.Name, 200),
             StoredProcedureExecutor.StrNull("@ContactNumber", player.ContactNumber, 50),
+            StoredProcedureExecutor.Str("@OrgCD", player.OrgCD, 50),
             StoredProcedureExecutor.OutInt("@Id"));
 
         player.Id = id;
@@ -39,7 +42,8 @@ public class PlayerRepository : IPlayerRepository
     }
 
     public async Task<Player?> GetByExternalIdAsync(string externalId, CancellationToken ct = default) =>
-        await _db.Players.FirstOrDefaultAsync(p => p.ExternalPlayerId == externalId, ct);
+        await _db.Players.FirstOrDefaultAsync(
+            p => p.ExternalPlayerId == externalId && p.OrgCD == _orgContext.OrgCD, ct);
 
     public async Task<TournamentPlayer?> GetTournamentPlayerAsync(int tournamentId, int tournamentPlayerId, CancellationToken ct = default) =>
         await _db.TournamentPlayers
@@ -62,6 +66,7 @@ public class PlayerRepository : IPlayerRepository
             StoredProcedureExecutor.StrNull("@DeckName", tp.DeckName, 200),
             StoredProcedureExecutor.Bit("@IsDropped", tp.IsDropped),
             StoredProcedureExecutor.DateTimeParam("@RegisteredAt", tp.RegisteredAt),
+            StoredProcedureExecutor.Str("@OrgCD", tp.OrgCD, 50),
             StoredProcedureExecutor.OutInt("@Id"));
 
         tp.Id = id;

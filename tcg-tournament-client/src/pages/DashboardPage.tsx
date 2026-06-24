@@ -9,6 +9,7 @@ import DeleteEventModal from '../components/DeleteEventModal';
 export default function DashboardPage() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [showCreate, setShowCreate] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [deleteTargets, setDeleteTargets] = useState<Tournament[] | null>(null);
@@ -29,8 +30,16 @@ export default function DashboardPage() {
   const [form, setForm] = useState(defaultForm);
 
   const load = () => {
+    setLoadError('');
+    setLoading(true);
     tournamentApi.getAll()
       .then(setTournaments)
+      .catch((err: unknown) => {
+        setTournaments([]);
+        const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message
+          ?? (err as { message?: string })?.message;
+        setLoadError(msg ?? 'Could not load events. Check that the API is running on port 5284.');
+      })
       .finally(() => setLoading(false));
   };
 
@@ -172,7 +181,18 @@ export default function DashboardPage() {
         </form>
       )}
 
-      {tournaments.length === 0 ? (
+      {loadError && (
+        <div className="bg-red-900/20 border border-red-700/50 text-red-300 rounded-xl px-4 py-3 mb-4 text-sm">
+          {loadError}
+          <button type="button" onClick={load} className="ml-3 underline hover:text-red-200">Retry</button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center">
+          <p className="text-slate-400">Loading events...</p>
+        </div>
+      ) : tournaments.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center">
           <p className="text-slate-400">No events yet. Create your first tournament to get started.</p>
         </div>

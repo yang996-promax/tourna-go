@@ -10,8 +10,7 @@ public class MatchRepository : IMatchRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
-
-    public MatchRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public MatchRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext _)
     {
         _db = db;
         _sp = sp;
@@ -61,6 +60,7 @@ public class MatchRepository : IMatchRepository
             StoredProcedureExecutor.Int("@RoundType", (int)round.RoundType),
             StoredProcedureExecutor.Bit("@IsComplete", round.IsComplete),
             StoredProcedureExecutor.DateTimeNull("@CompletedAt", round.CompletedAt),
+            StoredProcedureExecutor.Str("@OrgCD", round.OrgCD, 50),
             StoredProcedureExecutor.OutInt("@Id"));
 
         round.Id = id;
@@ -80,6 +80,7 @@ public class MatchRepository : IMatchRepository
                 StoredProcedureExecutor.Bit("@IsComplete", match.IsComplete),
                 StoredProcedureExecutor.IntNull("@WinnerId", match.WinnerId),
                 StoredProcedureExecutor.IntNull("@TopCutBracketId", match.TopCutBracketId),
+                StoredProcedureExecutor.Str("@OrgCD", match.OrgCD, 50),
                 StoredProcedureExecutor.OutInt("@Id"));
 
             match.Id = id;
@@ -119,6 +120,7 @@ public class MatchRepository : IMatchRepository
                 StoredProcedureExecutor.Int("@PlayerAMatchPoints", result.PlayerAMatchPoints),
                 StoredProcedureExecutor.Int("@PlayerBMatchPoints", result.PlayerBMatchPoints),
                 StoredProcedureExecutor.DateTimeParam("@RecordedAt", result.RecordedAt),
+                StoredProcedureExecutor.Str("@OrgCD", result.OrgCD, 50),
                 StoredProcedureExecutor.OutInt("@Id"));
 
             result.Id = id;

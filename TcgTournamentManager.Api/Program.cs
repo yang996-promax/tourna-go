@@ -2,12 +2,15 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TcgTournamentManager.Api.Services;
 using TcgTournamentManager.Core.Interfaces;
 using TcgTournamentManager.Infrastructure;
 using TcgTournamentManager.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentOrgContext, CurrentOrgContext>();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options =>

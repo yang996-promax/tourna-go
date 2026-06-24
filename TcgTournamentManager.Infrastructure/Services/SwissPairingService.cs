@@ -97,6 +97,7 @@ public class SwissPairingService : ISwissPairingService
 
         var round = new Round
         {
+            OrgCD = tournament.OrgCD,
             TournamentId = tournamentId,
             RoundNumber = nextRound,
             RoundType = RoundType.Swiss
@@ -105,6 +106,7 @@ public class SwissPairingService : ISwissPairingService
 
         var matches = pairings.Select(p => new Match
         {
+            OrgCD = tournament.OrgCD,
             RoundId = round.Id,
             TableNumber = p.TableNumber,
             PlayerAId = p.PlayerAId,
@@ -120,6 +122,7 @@ public class SwissPairingService : ISwissPairingService
         {
             await _byeRepo.RecordByeAsync(new ByeHistory
             {
+                OrgCD = tournament.OrgCD,
                 TournamentId = tournamentId,
                 TournamentPlayerId = byeMatch.PlayerAId!.Value,
                 RoundNumber = nextRound

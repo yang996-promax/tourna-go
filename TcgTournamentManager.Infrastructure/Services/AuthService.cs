@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.DTOs;
 using TcgTournamentManager.Core.Entities;
 using TcgTournamentManager.Core.Interfaces;
@@ -23,7 +24,7 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
     {
-        var user = await _userRepo.GetByUsernameAsync(request.Username, ct)
+        var user = await _userRepo.GetByUsernameAsync(request.Username, ct: ct)
             ?? throw new UnauthorizedAccessException("Invalid credentials.");
 
         if (!VerifyPassword(request.Password, user.PasswordHash))
@@ -34,14 +35,17 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> RegisterAsync(RegisterOrganizerRequest request, CancellationToken ct = default)
     {
-        if (await _userRepo.GetByUsernameAsync(request.Username, ct) != null)
+        var orgCd = string.IsNullOrWhiteSpace(request.OrgCD) ? OrgDefaults.DefaultOrgCD : request.OrgCD.Trim();
+
+        if (await _userRepo.GetByUsernameAsync(request.Username, orgCd, ct) != null)
             throw new InvalidOperationException("Username already exists.");
 
         var user = await _userRepo.CreateAsync(new OrganizerUser
         {
             Username = request.Username,
             PasswordHash = HashPassword(request.Password),
-            DisplayName = request.DisplayName
+            DisplayName = request.DisplayName,
+            OrgCD = orgCd
         }, ct);
 
         return GenerateToken(user);
@@ -55,7 +59,8 @@ public class AuthService : IAuthService
         {
             Username = "admin",
             PasswordHash = HashPassword("admin123"),
-            DisplayName = "Tournament Organizer"
+            DisplayName = "Tournament Organizer",
+            OrgCD = OrgDefaults.DefaultOrgCD
         }, ct);
     }
 
@@ -69,7 +74,8 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim("display_name", user.DisplayName)
+            new Claim("display_name", user.DisplayName),
+            new Claim("org_cd", user.OrgCD)
         };
 
         var token = new JwtSecurityToken(
@@ -83,7 +89,8 @@ public class AuthService : IAuthService
             new JwtSecurityTokenHandler().WriteToken(token),
             user.Username,
             user.DisplayName,
-            expires);
+            expires,
+            user.OrgCD);
     }
 
     private static string HashPassword(string password)

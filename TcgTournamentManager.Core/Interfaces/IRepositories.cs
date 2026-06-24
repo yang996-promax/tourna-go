@@ -74,7 +74,7 @@ public interface IAuditLogRepository
 
 public interface IOrganizerUserRepository
 {
-    Task<OrganizerUser?> GetByUsernameAsync(string username, CancellationToken ct = default);
+    Task<OrganizerUser?> GetByUsernameAsync(string username, string? orgCd = null, CancellationToken ct = default);
     Task<OrganizerUser> CreateAsync(OrganizerUser user, CancellationToken ct = default);
     Task<int> CountAsync(CancellationToken ct = default);
 }

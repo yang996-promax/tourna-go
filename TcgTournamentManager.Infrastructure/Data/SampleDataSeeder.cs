@@ -10,25 +10,30 @@ public class SampleDataSeeder
     private readonly ITournamentRepository _tournamentRepo;
     private readonly IPlayerRepository _playerRepo;
     private readonly IAuditLogRepository _auditRepo;
+    private readonly ICurrentOrgContext _orgContext;
 
     public SampleDataSeeder(
         TournamentDbContext db,
         ITournamentRepository tournamentRepo,
         IPlayerRepository playerRepo,
-        IAuditLogRepository auditRepo)
+        IAuditLogRepository auditRepo,
+        ICurrentOrgContext orgContext)
     {
         _db = db;
         _tournamentRepo = tournamentRepo;
         _playerRepo = playerRepo;
         _auditRepo = auditRepo;
+        _orgContext = orgContext;
     }
 
     public async Task SeedIfEmptyAsync(CancellationToken ct = default)
     {
         if (_db.Tournaments.Any()) return;
 
+        var orgCd = _orgContext.OrgCD;
         var tournament = await _tournamentRepo.CreateAsync(new Tournament
         {
+            OrgCD = orgCd,
             Name = "Spring Regional Championship",
             GameTitle = "Pokémon TCG",
             EventDate = DateTime.UtcNow.Date.AddDays(7),
@@ -57,6 +62,7 @@ public class SampleDataSeeder
         {
             var player = await _playerRepo.CreatePlayerAsync(new Player
             {
+                OrgCD = orgCd,
                 ExternalPlayerId = externalId,
                 Name = name,
                 ContactNumber = contact
@@ -64,6 +70,7 @@ public class SampleDataSeeder
 
             await _playerRepo.AddToTournamentAsync(new TournamentPlayer
             {
+                OrgCD = orgCd,
                 TournamentId = tournament.Id,
                 PlayerId = player.Id,
                 PlayerNumber = number++,

@@ -10,20 +10,23 @@ public class PlayerService : IPlayerService
     private readonly ITournamentRepository _tournamentRepo;
     private readonly IPlayerRepository _playerRepo;
     private readonly IAuditLogRepository _auditRepo;
+    private readonly ICurrentOrgContext _orgContext;
 
     public PlayerService(
         ITournamentRepository tournamentRepo,
         IPlayerRepository playerRepo,
-        IAuditLogRepository auditRepo)
+        IAuditLogRepository auditRepo,
+        ICurrentOrgContext orgContext)
     {
         _tournamentRepo = tournamentRepo;
         _playerRepo = playerRepo;
         _auditRepo = auditRepo;
+        _orgContext = orgContext;
     }
 
     public async Task<PlayerDto> AddPlayerAsync(int tournamentId, CreatePlayerRequest request, CancellationToken ct = default)
     {
-        _ = await _tournamentRepo.GetByIdAsync(tournamentId, ct)
+        var tournament = await _tournamentRepo.GetByIdAsync(tournamentId, ct)
             ?? throw new InvalidOperationException("Tournament not found.");
 
         var player = await _playerRepo.GetByExternalIdAsync(request.ExternalPlayerId, ct);
@@ -31,6 +34,7 @@ public class PlayerService : IPlayerService
         {
             player = await _playerRepo.CreatePlayerAsync(new Player
             {
+                OrgCD = tournament.OrgCD,
                 ExternalPlayerId = request.ExternalPlayerId,
                 Name = request.Name,
                 ContactNumber = request.ContactNumber
@@ -65,6 +69,7 @@ public class PlayerService : IPlayerService
         {
             tp = await _playerRepo.AddToTournamentAsync(new TournamentPlayer
             {
+                OrgCD = tournament.OrgCD,
                 TournamentId = tournamentId,
                 PlayerId = player.Id,
                 PlayerNumber = playerNumber,

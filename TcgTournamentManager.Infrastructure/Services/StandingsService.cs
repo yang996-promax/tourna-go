@@ -147,9 +147,13 @@ public class StandingsService : IStandingsService
 
     public async Task RecalculateAndPersistAsync(int tournamentId, CancellationToken ct = default)
     {
+        var tournament = await _tournamentRepo.GetByIdAsync(tournamentId, ct)
+            ?? throw new InvalidOperationException("Tournament not found.");
+
         var standings = await CalculateStandingsAsync(tournamentId, ct: ct);
         var entities = standings.Select(s => new Standing
         {
+            OrgCD = tournament.OrgCD,
             TournamentId = tournamentId,
             TournamentPlayerId = s.TournamentPlayerId,
             Rank = s.Rank,

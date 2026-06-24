@@ -9,8 +9,7 @@ public class ByeHistoryRepository : IByeHistoryRepository
 {
     private readonly TournamentDbContext _db;
     private readonly StoredProcedureExecutor _sp;
-
-    public ByeHistoryRepository(TournamentDbContext db, StoredProcedureExecutor sp)
+    public ByeHistoryRepository(TournamentDbContext db, StoredProcedureExecutor sp, ICurrentOrgContext _)
     {
         _db = db;
         _sp = sp;
@@ -26,6 +25,7 @@ public class ByeHistoryRepository : IByeHistoryRepository
             StoredProcedureExecutor.Int("@TournamentPlayerId", bye.TournamentPlayerId),
             StoredProcedureExecutor.Int("@RoundNumber", bye.RoundNumber),
             StoredProcedureExecutor.DateTimeParam("@AssignedAt", bye.AssignedAt),
+            StoredProcedureExecutor.Str("@OrgCD", bye.OrgCD, 50),
             StoredProcedureExecutor.OutInt("@Id"));
 
         bye.Id = id;

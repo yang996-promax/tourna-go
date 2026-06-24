@@ -1,10 +1,12 @@
+using TcgTournamentManager.Core;
 using TcgTournamentManager.Core.Enums;
 
 namespace TcgTournamentManager.Core.Entities;
 
-public class AuditLog : ISyncTrackable
+public class AuditLog : ISyncTrackable, IOrgScoped
 {
     public int Id { get; set; }
+    public string OrgCD { get; set; } = OrgDefaults.DefaultOrgCD;
     public string Action { get; set; } = string.Empty;
     public string EntityType { get; set; } = string.Empty;
     public int? EntityId { get; set; }
